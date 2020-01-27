@@ -1,0 +1,23 @@
+{
+  "slug": "AaronStatic",
+  "name": "Aaron Static",
+  "version": "1.0.0",
+  "license": "MIT",
+  "brand": "Aaron Static",
+  "author": "Aaron Static",
+  "authorEmail": "aaronstatic@gmail.com",
+  "authorUrl": "http://patreon.com/aaronstatic",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "ChordCV",
+      "name": "ChordCV",
+      "description": "Generates a chord",
+      "tags": []
+    }
+  ]
+}
