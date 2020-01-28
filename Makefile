@@ -1,5 +1,6 @@
 # If RACK_DIR is not defined when calling the Makefile, default to two directories above
-RACK_DIR ?= ../..
+RACK_DIR ?= /e/Projects/vcv-rack/Rack-SDK
+RACK_USER_DIR ?= /c/Users/Aaron\ Static/OneDrive/Documents/Rack
 
 # FLAGS will be passed to both the C and C++ compiler
 FLAGS +=

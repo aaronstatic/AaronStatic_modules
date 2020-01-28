@@ -6,18 +6,18 @@
   "brand": "Aaron Static",
   "author": "Aaron Static",
   "authorEmail": "aaronstatic@gmail.com",
-  "authorUrl": "http://patreon.com/aaronstatic",
-  "pluginUrl": "",
-  "manualUrl": "",
-  "sourceUrl": "",
-  "donateUrl": "",
+  "authorUrl": "https://github.com/aaronstatic/",
+  "pluginUrl": "https://github.com/aaronstatic/AaronStatic_modules",
+  "manualUrl": "https://github.com/aaronstatic/AaronStatic_modules",
+  "sourceUrl": "https://github.com/aaronstatic/AaronStatic_modules",
+  "donateUrl": "https://paypal.me/AaronStaticAU",
   "changelogUrl": "",
   "modules": [
     {
       "slug": "ChordCV",
       "name": "ChordCV",
       "description": "Generates a chord",
-      "tags": []
+      "tags": ["Polyphonic","Tuner"]
     }
   ]
 }
