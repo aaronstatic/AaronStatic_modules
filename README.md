@@ -10,6 +10,11 @@ Generates a chord and ouputs up to 4 x 1v/oct voltages and a polyphonic 1v/oct s
 * **Type**: Chooses the chord type between major, minor, dominant 7, minor 7, major 7, suspended 2nd, suspended 4th, diminished, augmented (input range -4v to 4v)
 * **Inversion**: Chooses chord inversion (input range 0v to 3v)
 * **Voicing**: Chooses the chord voicing (input range 0v to 4v)
+  * At zero, the chord is voiced as per normal
+  * First stop, the root note is dropped -1 octave
+  * Second stop, the root and fifth is dropped -1 octave
+  * Third stop, the root is dropped 1 octave, the third is raised +1 octave
+  * Fourth stop (only if the chord is a 7, m7 or maj7), the root and seventh notes are dropped -1 octave
 
 The first 1v/oct output (and first poly channel) will always be the bass note, in case you wish to route that to a bass oscillator.
 
