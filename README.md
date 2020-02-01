@@ -1,6 +1,8 @@
 # Aaron Static Modules
 My modules for VCV-Rack (http://vcvrack.com). Just "ChordCV" for now, but more coming soon. If you have any ideas for music theory based modules get me on twitter @aaronstatic
 
+Introduction video: https://www.youtube.com/watch?v=SSoJW4VzTp8
+
 ## ChordCV
 ![ChordCV](https://i.imgur.com/pdB5wFX.png "Logo Title Text 1")
 
