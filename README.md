@@ -3,6 +3,8 @@ My modules for VCV-Rack (http://vcvrack.com). Just "ChordCV" for now, but more c
 
 Introduction video: https://www.youtube.com/watch?v=SSoJW4VzTp8
 
+To install, just go to the plugin library (https://vcvrack.com/plugins) and search for "Aaron Static" and click the +Add button
+
 ## ChordCV
 ![ChordCV](https://i.imgur.com/pdB5wFX.png "Logo Title Text 1")
 
