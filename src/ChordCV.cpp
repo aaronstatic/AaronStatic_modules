@@ -222,7 +222,7 @@ struct ChordCVWidget : ModuleWidget {
 	struct ChordDisplayWidget : TransparentWidget {
 		ChordCV* module;
 		std::shared_ptr<Font> font;
-		char text[9];
+		char text[10];
 
 		ChordDisplayWidget(Vec _pos, Vec _size, ChordCV* _module) {
 			box.size = _size;
@@ -248,7 +248,7 @@ struct ChordCVWidget : ModuleWidget {
 
 				int note = module->root_semi;
 				int type = module->chord_type;
-				char inv[3];
+				char inv[4];
 				if(module->inverted){
 					sprintf(inv,"/%s",noteNames[module->bass_note]);
 				}
