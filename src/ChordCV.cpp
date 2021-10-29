@@ -234,8 +234,7 @@ struct ChordCVWidget : ModuleWidget {
 		ChordDisplayWidget(Vec _pos, Vec _size, ChordCV* _module) {
 			box.size = _size;
 			box.pos = _pos.minus(_size.div(2));
-			module = _module;
-			font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/PixelOperator.ttf"));
+			module = _module;			
 		}
 
 		void chordName() {
@@ -255,7 +254,7 @@ struct ChordCVWidget : ModuleWidget {
 
 				int note = module->root_semi;
 				int type = module->chord_type;
-				char inv[4];
+				char inv[4] = "";
 				if(module->inverted){
 					sprintf(inv,"/%s",noteNames[module->bass_note]);
 				}
@@ -266,23 +265,27 @@ struct ChordCVWidget : ModuleWidget {
 			}
 		}
 
-		void draw(const DrawArgs &args) override {
-			NVGcolor textColor = prepareDisplay(args.vg, &box, 22);
-			nvgFontFaceId(args.vg, font->handle);
-			nvgTextLetterSpacing(args.vg, -1.5);
-			nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+		void drawLayer(const DrawArgs& args, int layer) override {
+			if (layer != 1) return;
 
-			Vec textPos = Vec(box.size.x/2, 21.0f);
-			nvgFillColor(args.vg, textColor);
-			chordName();
-			nvgText(args.vg, textPos.x, textPos.y, text, NULL);
+			font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/PixelOperator.ttf"));
+			if (font) {
+				NVGcolor textColor = prepareDisplay(args.vg, &box, 22);
+				nvgFontFaceId(args.vg, font->handle);
+				nvgTextLetterSpacing(args.vg, -1.5);
+				nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+				Vec textPos = Vec(box.size.x/2, 21.0f);
+				nvgFillColor(args.vg, textColor);
+				chordName();
+				nvgText(args.vg, textPos.x, textPos.y, text, NULL);
+			}
+			Widget::drawLayer(args, layer);
 		}
-
 	};
 
 	ChordCVWidget(ChordCV* module) {
 		setModule(module);
-		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/ChordCV.svg")));
+		setPanel(createPanel(asset::plugin(pluginInstance, "res/ChordCV.svg")));
 
 		addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
@@ -291,7 +294,7 @@ struct ChordCVWidget : ModuleWidget {
 
 		const int centerX = box.size.x / 2;
 
-		ChordDisplayWidget* display = new ChordDisplayWidget(Vec(centerX, 55), Vec(76, 29), module);
+		ChordDisplayWidget* display = new ChordDisplayWidget(Vec(centerX, 55), Vec(82, 29), module);
 		addChild(display);
 
 		const int offsetXL = 40;
