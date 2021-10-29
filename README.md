@@ -1,14 +1,14 @@
 # Aaron Static Modules
-My modules for VCV-Rack (http://vcvrack.com). Just "ChordCV" for now, but more coming soon. If you have any ideas for music theory based modules get me on twitter @aaronstatic
+My music theory related modules for VCV-Rack 2.0 (http://vcvrack.com). If you have any ideas for modules or feedback get me on twitter @aaronstatic
 
-Introduction video: https://www.youtube.com/watch?v=SSoJW4VzTp8
+ChordCV Introduction video: https://www.youtube.com/watch?v=SSoJW4VzTp8
 
 To install, just go to the plugin library (https://vcvrack.com/plugins) search for "Aaron Static" and click the +Add button
 
 ## ChordCV
-![ChordCV](https://i.imgur.com/pdB5wFX.png "Logo Title Text 1")
+![ChordCV](https://i.imgur.com/pdB5wFX.png "ChordCV")
 
-Generates a chord and ouputs up to 4 x 1v/oct voltages and a polyphonic 1v/oct signal seperately.
+Generates a chord and outputs up to 4 x 1v/oct voltages and a polyphonic 1v/oct signal separately.
 
 * **Root**: Chooses the root note (1v/oct, input range -4v to 4v)
 * **Type**: Chooses the chord type between major, minor, dominant 7, minor 7, major 7, suspended 2nd, suspended 4th, diminished, augmented (input range -4v to 4v)
@@ -23,3 +23,11 @@ Generates a chord and ouputs up to 4 x 1v/oct voltages and a polyphonic 1v/oct s
 The first 1v/oct output (and first poly channel) will always be the bass note, in case you wish to route that to a bass oscillator.
 
 If the chord is a triad (3 notes), the 4th 1v/oct output will be the bass note + 1 octave for convenience. The polyphonic output will not include this higher note.
+
+## ScaleCV
+![ChordCV](https://i.imgur.com/GHhsEgZ.jpg "ScaleCV")
+
+Generates a scale and outputs a polyphonic 1v/oct signal with 8 notes.
+
+* **Root**: Chooses the root note (1v/oct, input range -4v to 4v)
+* **Mode**: Chooses the scale mode (input range -4v to 4v)
