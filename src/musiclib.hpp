@@ -13,3 +13,10 @@ struct chord {
 
 struct chord get_chord(int root_note, int type, int inversion, int voicing);
 void get_chord_name(int root_semi, int chord_type, bool inverted, int bass_note, char* text);
+
+//Scales
+struct scale {
+    int notes[8];
+};
+void get_scale_name(int root_semi, int mode, char* text);
+struct scale get_scale(int root_note, int mode);

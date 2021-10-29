@@ -141,8 +141,8 @@ struct chord get_chord(int root_note, int type, int inversion, int voicing){
     return return_chord;
 }
 
-static const char * noteNames[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-static const char * chordTypes[] = {
+static const char * NOTE_NAMES[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+static const char * CHORD_TYPE_NAMES[] = {
   "",
   "m",
   "7",
@@ -155,11 +155,50 @@ static const char * chordTypes[] = {
 };
 
 void get_chord_name(int root_semi, int chord_type, bool inverted, int bass_note, char* text) {
-    int note = root_semi;
-    int type = chord_type;
     char inv[4];
     if(inverted){
-        sprintf(inv,"/%s",noteNames[bass_note]);
+        sprintf(inv,"/%s",NOTE_NAMES[bass_note]);
     }
-    sprintf(text, "%s%s%s", noteNames[note], chordTypes[type], inv);
+    sprintf(text, "%s%s%s", NOTE_NAMES[root_semi], CHORD_TYPE_NAMES[chord_type], inv);
+}
+
+//Scales
+static const char * MODE_NAMES[] = {
+  "",
+  " Dorian",
+  " Phrygian",
+  " Lydian",
+  " Mixolydian",
+  " Minor",
+  " Locrian"
+};
+
+void get_scale_name(int root_semi, int mode, char* text) {
+    sprintf(text, "%s%s", NOTE_NAMES[root_semi], MODE_NAMES[mode]);
+}
+
+static const int MODE_DEGREES[7][7] = {
+    {2,2,1,2,2,2,1}, //Major (Ionian)
+    {2,1,2,2,2,1,2}, //Dorian
+    {1,2,2,2,1,2,2}, //Phrygian
+    {2,2,2,1,2,2,1}, //Lydian
+    {2,2,1,2,2,1,2}, //Mixolydian
+    {2,1,2,2,1,2,2}, //Minor (Aeolian)
+    {1,2,2,1,2,2,2}, //Locrian
+};
+
+struct scale get_scale(int root_note, int mode){
+    struct scale return_scale;
+
+    const int *degrees = MODE_DEGREES[mode];
+
+    return_scale.notes[0] = root_note;
+    int current_note = root_note;
+
+    int t;
+    for(t=1; t<8; t++){
+        current_note += degrees[t-1];
+        return_scale.notes[t] = current_note;
+    }
+    return return_scale;
 }
