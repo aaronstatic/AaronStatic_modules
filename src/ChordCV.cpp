@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-
+#include "musiclib.hpp"
 
 struct ChordCV : Module {
 	enum ParamIds {
@@ -48,40 +48,8 @@ struct ChordCV : Module {
 	void process(const ProcessArgs& args) override;
 };
 
-inline float note_to_voltage(float &v) {
-	float octave = floor(v / 12.0) - 4.0;
-	float semi = round((int)v % 12);
-
-	return 1.0*octave + semi/12.0;
-}
-
-inline float voltage_to_note(float &value) {
-	float octave = round(value);
-	float rest = value - 1.0*octave;
-	float semi = round( rest*12.0 );
-	return semi;
-}
-
-inline int voltage_to_note_int(float &value) {
-	float octave = round(value);
-	float rest = value - 1.0*octave;
-	int semi = (int)round( rest*12.0 );
-	if(semi < 0) semi += 12;
-	return semi;
-}
-
 void ChordCV::process(const ProcessArgs &args){
-	int degrees[9][3] = {
-		{4,7,0}, //Major
-		{3,7,0}, //Minor
-		{4,7,10}, //Dominant 7
-		{3,7,10}, //Minor 7
-		{4,7,11}, //Major 7
-		{2,7,0}, //sus2
-		{5,7,0}, //sus4
-		{3,6,0}, //dim
-		{4,8,0} //aug
-	};
+
 	float value = params[ROOT_PARAM].getValue();
 	if(inputs[ROOT_INPUT].isConnected()){
 		value = inputs[ROOT_INPUT].getVoltage();
@@ -112,115 +80,27 @@ void ChordCV::process(const ProcessArgs &args){
 		voicing = (int)clamp(round(inputs[VOICING_PARAM].getVoltage()),0.0f,4.0f);
 	}
 
+	int root_note = (octave + 4) * 12 + (int)semi;
+
 	//Make the chord
-	int * chord = degrees[chord_type];
+	struct chord c = get_chord(root_note,chord_type,inversion,voicing);
 
-	float root_note = (octave + 4.0) * 12.0 + semi;
-	float third_note = root_note + (float)chord[0];
-	float fifth_note = root_note + (float)chord[1];
-	float seventh_note = root_note + (float)chord[2];
-
-	float root_v = note_to_voltage(root_note);
-	float third_v = note_to_voltage(third_note);
-	float fifth_v = note_to_voltage(fifth_note);
-	float seventh_v=0.0;
-	if(chord[2] == 0){
-		if(inversion == 3){
-			inversion = 2;
-		}
-		if(inversion == 1){
-			root_v += 1.0;
-			float v = root_v;
-			root_v = third_v;
-			third_v = fifth_v;
-			fifth_v = v;
-		}
-		if(inversion == 2){
-			root_v += 1.0;
-			third_v += 1.0;
-			float v = root_v;
-			root_v = fifth_v;
-			fifth_v = third_v;
-			third_v = v;
-		}
-
-		if(voicing == 1){
-			root_v -= 1.0;
-		}
-		if(voicing == 2){
-			root_v -= 1.0;
-			fifth_v -= 1.0;
-		}
-		if(voicing == 3 || voicing == 4){
-			root_v -= 1.0;
-			third_v += 1.0;
-		}
-
-		bass_note = voltage_to_note_int(root_v);
-		seventh_v = root_v + 1.0;
-		outputs[POLY_OUTPUT].setChannels(3);
-	}else{
-		seventh_v = note_to_voltage(seventh_note);
-		if(inversion == 1){
-			root_v += 1.0;
-			float v = root_v;
-			root_v = third_v;
-			third_v = fifth_v;
-			fifth_v = seventh_v;
-			seventh_v = v;
-		}
-		if(inversion == 2){
-			root_v += 1.0;
-			third_v += 1.0;
-			float v = third_v;
-			float r = root_v;
-			root_v = fifth_v;
-			fifth_v = r;
-			third_v = seventh_v;
-			seventh_v = v;
-		}
-		if(inversion == 3){
-			root_v += 1.0;
-			third_v += 1.0;
-			fifth_v += 1.0;
-			float v = fifth_v;
-			float r = root_v;
-			root_v = seventh_v;
-			seventh_v = v;
-			fifth_v = third_v;
-			third_v = r;
-		}
-
-		if(voicing == 1){
-			root_v -= 1.0;
-		}
-		if(voicing == 2){
-			root_v -= 1.0;
-			fifth_v -= 1.0;
-		}
-		if(voicing == 3){
-			root_v -= 1.0;
-			third_v += 1.0;
-		}
-		if(voicing == 4){
-			root_v -= 1.0;
-			seventh_v -= 1.0;
-		}
-
-		bass_note = voltage_to_note_int(root_v);
-		outputs[POLY_OUTPUT].setChannels(4);
+	if(inverted){
+		bass_note = c.notes[0] % 12;
 	}
 
-	outputs[CV_OUTPUTS + 0].setVoltage(root_v);
-	outputs[CV_OUTPUTS + 1].setVoltage(third_v);
-	outputs[CV_OUTPUTS + 2].setVoltage(fifth_v);
-	outputs[CV_OUTPUTS + 3].setVoltage(seventh_v);
+	outputs[CV_OUTPUTS + 0].setVoltage(note_to_voltage(c.notes[0]));
+	outputs[CV_OUTPUTS + 1].setVoltage(note_to_voltage(c.notes[1]));
+	outputs[CV_OUTPUTS + 2].setVoltage(note_to_voltage(c.notes[2]));
+	if(c.num_notes == 3){
+		outputs[CV_OUTPUTS + 3].setVoltage(note_to_voltage(c.notes[0] + 12));
+	}else{
+		outputs[CV_OUTPUTS + 3].setVoltage(note_to_voltage(c.notes[3]));
+	}
 
-	outputs[POLY_OUTPUT].setVoltage(root_v,0);
-	outputs[POLY_OUTPUT].setVoltage(third_v,1);
-	outputs[POLY_OUTPUT].setVoltage(fifth_v,2);
-	if(chord[2] > 0){
-		outputs[POLY_OUTPUT].setVoltage(seventh_v,3);
+	outputs[POLY_OUTPUT].setChannels(c.num_notes);
+	for(int t=0; t<c.num_notes; t++){
+		outputs[POLY_OUTPUT].setVoltage(note_to_voltage(c.notes[t]),t);
 	}
 }
 
@@ -238,34 +118,6 @@ struct ChordCVWidget : ModuleWidget {
 			font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/PixelOperator.ttf"));
 		}
 
-		void chordName() {
-			if (module != NULL){
-				static const char * noteNames[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-				static const char * chordTypes[] = {
-				  "",
-				  "m",
-				  "7",
-				  "m7",
-				  "maj7",
-				  "sus2",
-				  "sus4",
-				  "dim",
-				  "+"
-				};
-
-				int note = module->root_semi;
-				int type = module->chord_type;
-				char inv[4];
-				if(module->inverted){
-					sprintf(inv,"/%s",noteNames[module->bass_note]);
-				}
-				sprintf(text, "%s%s%s", noteNames[note], chordTypes[type], inv);
-
-			}else{
-				snprintf(text, 9, "         ");
-			}
-		}
-
 		void draw(const DrawArgs &args) override {
 			NVGcolor textColor = prepareDisplay(args.vg, &box, 22);
 			nvgFontFaceId(args.vg, font->handle);
@@ -274,7 +126,13 @@ struct ChordCVWidget : ModuleWidget {
 
 			Vec textPos = Vec(box.size.x/2, 21.0f);
 			nvgFillColor(args.vg, textColor);
-			chordName();
+
+			if (module != NULL){
+				get_chord_name(module->root_semi,module->chord_type,module->inverted,module->bass_note,text);
+			}else{
+				snprintf(text, 9, "         ");
+			}
+
 			nvgText(args.vg, textPos.x, textPos.y, text, NULL);
 		}
 
