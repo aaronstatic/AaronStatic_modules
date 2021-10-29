@@ -32,10 +32,17 @@ struct ChordCV : Module {
 
 	ChordCV() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-		configParam(ROOT_PARAM, -4.0, 4.0, 0.0, "");
-		configParam(TYPE_PARAM, -4.0, 4.0, -4.0, "");
-		configParam(INVERSION_PARAM, 0.0, 3.0, 0.0, "");
-		configParam(VOICING_PARAM, 0.0, 4.0, 0.0, "");
+		configParam(ROOT_PARAM, -4.0, 4.0, 0.0, "Root Note");
+		configParam(TYPE_PARAM, -4.0, 4.0, -4.0, "Chord Type");
+		configParam(INVERSION_PARAM, 0.0, 3.0, 0.0, "Inversion");
+		configParam(VOICING_PARAM, 0.0, 4.0, 0.0, "Voicing");
+
+		configInput(ROOT_INPUT, "1V/oct pitch");
+		configInput(TYPE_INPUT, "Chord Type");
+		configInput(INVERSION_INPUT, "Inversion");
+		configInput(VOICING_INPUT, "Voicing");
+
+		configOutput(POLY_OUTPUT, "Polyphonic");
 	}
 
 	void process(const ProcessArgs& args) override;
