@@ -93,7 +93,7 @@ void RandomNoteCV::process(const ProcessArgs &args){
 			playing_voltage = note_to_voltage(playing_note);
 		}else{
 			float root_octave = round(polyNotes_v[0]) + 4.0f;
-			int index = (int)round(random::uniform() * (float)polyChannels);
+			int index = (int)round(random::uniform() * ((float)polyChannels - 1.0f));
 			if(bias > 0.0f && random::uniform() < bias){
 				index = 0;
 			}
