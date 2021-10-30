@@ -58,8 +58,8 @@ void ScaleCV::process(const ProcessArgs &args){
 	//Make the scale
 	struct scale s = get_scale(root_note, mode);
 
-	outputs[POLY_OUTPUT].setChannels(8);
-	for(int t=0; t<8; t++){
+	outputs[POLY_OUTPUT].setChannels(7);
+	for(int t=0; t<7; t++){
 		outputs[POLY_OUTPUT].setVoltage(note_to_voltage(s.notes[t]),t);
 	}
 }

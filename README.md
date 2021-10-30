@@ -27,7 +27,18 @@ If the chord is a triad (3 notes), the 4th 1v/oct output will be the bass note +
 ## ScaleCV
 ![ChordCV](https://i.imgur.com/GHhsEgZ.jpg "ScaleCV")
 
-Generates a scale and outputs a polyphonic 1v/oct signal with 8 notes.
+Generates a scale and outputs a polyphonic 1v/oct signal with 7 notes.
 
 * **Root**: Chooses the root note (1v/oct, input range -4v to 4v)
 * **Mode**: Chooses the scale mode (input range -4v to 4v)
+
+## RandomNoteCV
+![RandomNoteCV](https://i.imgur.com/5rybov5.jpg "RandomNoteCV")
+
+Generates a random note when triggered within the selected range and outputs a 1v/oct signal. If a polyphonic input is connected the note is selected from the provided notes (they are quantized).
+
+This module is best used when combined with the above modules.
+
+* **Trigger**: Triggers a new note to be selected
+* **Root Bias**: How often should the root (first) note be forced (0-100%, input range -4v to 4v, only valid if polyphonic input is connected)
+* **Range**: Range in octaves (Minimum=1, input range -4v to 4v)

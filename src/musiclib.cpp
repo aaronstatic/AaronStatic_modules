@@ -162,6 +162,10 @@ void get_chord_name(int root_semi, int chord_type, bool inverted, int bass_note,
     sprintf(text, "%s%s%s", NOTE_NAMES[root_semi], CHORD_TYPE_NAMES[chord_type], inv);
 }
 
+void get_note_name(int note, char* text) {
+    sprintf(text, "%s", NOTE_NAMES[note % 12]);
+}
+
 //Scales
 static const char * MODE_NAMES[] = {
   "",
@@ -178,13 +182,13 @@ void get_scale_name(int root_semi, int mode, char* text) {
 }
 
 static const int MODE_DEGREES[7][7] = {
-    {2,2,1,2,2,2,1}, //Major (Ionian)
-    {2,1,2,2,2,1,2}, //Dorian
-    {1,2,2,2,1,2,2}, //Phrygian
-    {2,2,2,1,2,2,1}, //Lydian
-    {2,2,1,2,2,1,2}, //Mixolydian
-    {2,1,2,2,1,2,2}, //Minor (Aeolian)
-    {1,2,2,1,2,2,2}, //Locrian
+    {2,2,1,2,2,2}, //Major (Ionian)
+    {2,1,2,2,2,1}, //Dorian
+    {1,2,2,2,1,2}, //Phrygian
+    {2,2,2,1,2,2}, //Lydian
+    {2,2,1,2,2,1}, //Mixolydian
+    {2,1,2,2,1,2}, //Minor (Aeolian)
+    {1,2,2,1,2,2}, //Locrian
 };
 
 struct scale get_scale(int root_note, int mode){
@@ -196,7 +200,7 @@ struct scale get_scale(int root_note, int mode){
     int current_note = root_note;
 
     int t;
-    for(t=1; t<8; t++){
+    for(t=1; t<7; t++){
         current_note += degrees[t-1];
         return_scale.notes[t] = current_note;
     }
