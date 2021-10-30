@@ -108,32 +108,33 @@ void ChordCV::process(const ProcessArgs &args){
 struct ChordCVWidget : ModuleWidget {
 	struct ChordDisplayWidget : TransparentWidget {
 		ChordCV* module;
-		std::shared_ptr<Font> font;
 		char text[10];
 
 		ChordDisplayWidget(Vec _pos, Vec _size, ChordCV* _module) {
 			box.size = _size;
 			box.pos = _pos.minus(_size.div(2));
-			module = _module;
-			font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/PixelOperator.ttf"));
+			module = _module;			
 		}
 
 		void draw(const DrawArgs &args) override {
-			NVGcolor textColor = prepareDisplay(args.vg, &box, 22);
-			nvgFontFaceId(args.vg, font->handle);
-			nvgTextLetterSpacing(args.vg, -1.5);
-			nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+			std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/PixelOperator.ttf"));
+			if(font){
+				NVGcolor textColor = prepareDisplay(args.vg, &box, 22);
+				nvgFontFaceId(args.vg, font->handle);
+				nvgTextLetterSpacing(args.vg, -1.5);
+				nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
 
-			Vec textPos = Vec(box.size.x/2, 21.0f);
-			nvgFillColor(args.vg, textColor);
+				Vec textPos = Vec(box.size.x/2, 21.0f);
+				nvgFillColor(args.vg, textColor);
 
-			if (module != NULL){
-				get_chord_name(module->root_semi,module->chord_type,module->inverted,module->bass_note,text);
-			}else{
-				snprintf(text, 9, "         ");
+				if (module != NULL){
+					get_chord_name(module->root_semi,module->chord_type,module->inverted,module->bass_note,text);
+				}else{
+					snprintf(text, 9, "         ");
+				}
+
+				nvgText(args.vg, textPos.x, textPos.y, text, NULL);
 			}
-
-			nvgText(args.vg, textPos.x, textPos.y, text, NULL);
 		}
 
 	};
