@@ -23,13 +23,13 @@
         "slug": "ScaleCV",
         "name": "ScaleCV",
         "description": "Generates a scale",
-        "tags": ["Polyphonic","Tuner"]
+        "tags": ["Polyphonic","Tuner","Quantizer"]
     },
     {
         "slug": "RandomNoteCV",
         "name": "RandomNoteCV",
         "description": "Generates a random note when triggered",
-        "tags": ["Polyphonic","Tuner"]
+        "tags": ["Polyphonic","Tuner","Random"]
     }
   ]
 }

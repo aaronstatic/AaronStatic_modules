@@ -25,12 +25,13 @@ The first 1v/oct output (and first poly channel) will always be the bass note, i
 If the chord is a triad (3 notes), the 4th 1v/oct output will be the bass note + 1 octave for convenience. The polyphonic output will not include this higher note.
 
 ## ScaleCV
-![ChordCV](https://i.imgur.com/GHhsEgZ.jpg "ScaleCV")
+![ChordCV](https://i.imgur.com/z52Qqil.jpg "ScaleCV")
 
-Generates a scale and outputs a polyphonic 1v/oct signal with 7 notes.
+Generates a scale and outputs a polyphonic 1v/oct signal with 7 notes + quantizes the 4 monophonic inputs to that scale if provided.
 
 * **Root**: Chooses the root note (1v/oct, input range -4v to 4v)
 * **Mode**: Chooses the scale mode (input range -4v to 4v)
+* **Quantizers**: 4 Quantizers that will quantize a monophonic input to the selected scale
 
 ## RandomNoteCV
 ![RandomNoteCV](https://i.imgur.com/5rybov5.jpg "RandomNoteCV")

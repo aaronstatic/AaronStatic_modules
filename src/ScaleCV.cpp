@@ -10,10 +10,12 @@ struct ScaleCV : Module {
 	enum InputIds {
 		ROOT_INPUT,
 		MODE_INPUT,
+		ENUMS(QUANTIZER_INPUTS, 4),
 		NUM_INPUTS
 	};
 	enum OutputIds {
 		POLY_OUTPUT,
+		ENUMS(QUANTIZER_OUTPUTS, 4),
 		NUM_OUTPUTS
 	};
 	enum LightIds {
@@ -57,6 +59,35 @@ void ScaleCV::process(const ProcessArgs &args){
 
 	//Make the scale
 	struct scale s = get_scale(root_note, mode);
+
+	//Quantizers
+	for(int t=0; t<4; t++){
+		if(inputs[QUANTIZER_INPUTS + t].isConnected() && outputs[QUANTIZER_OUTPUTS + t].isConnected()){
+			float in_v = inputs[QUANTIZER_INPUTS + t].getVoltage();
+			float in_octave = round(in_v) + 4;
+			float in_semi = voltage_to_note(in_v);
+			float lowest_dist = 12.0f;
+			float out_note = 0.0f;
+			for(int i=0; i<7; i++){
+				float note = (float)(s.notes[i] - ((octave + 4) * 12));
+				float dist = abs(note - in_semi);
+				if(dist < lowest_dist){
+					out_note = note;
+					lowest_dist = dist;
+				}
+				//check one octave down
+				note -= 12;
+				dist = abs(note - in_semi);
+				if(dist < lowest_dist){
+					out_note = note;
+					lowest_dist = dist;
+				}
+			}
+			out_note += in_octave * 12.0f;
+			outputs[QUANTIZER_OUTPUTS+t].setVoltage(note_to_voltage((int)out_note));
+		}
+
+	}
 
 	outputs[POLY_OUTPUT].setChannels(7);
 	for(int t=0; t<7; t++){
@@ -115,12 +146,28 @@ struct ScaleCVWidget : ModuleWidget {
 
 		const int offsetXL = 40;
 
+		static const int offsetX = 28;
+		static const int posY = 190;
+		static const int spacingY2 = 32;
+		static const int posY1 = posY + spacingY2;
+		static const int posY2 = posY + (spacingY2 * 2);
+		static const int posY3 = posY + (spacingY2 * 3);
 
 		addParam(createParamCentered<Rogan2PWhite>(Vec(centerX,95), module, ScaleCV::ROOT_PARAM));
 		addInput(createInputCentered<PJ301MPort>(Vec(centerX - offsetXL, 95), module, ScaleCV::ROOT_INPUT));
 
 		addParam(createParamCentered<Rogan2PWhite>(Vec(centerX,140), module, ScaleCV::MODE_PARAM));
 		addInput(createInputCentered<PJ301MPort>(Vec(centerX - offsetXL, 140), module, ScaleCV::MODE_INPUT));
+
+		addInput(createInputCentered<PJ301MPort>(Vec(centerX - offsetX, posY), module, ScaleCV::QUANTIZER_INPUTS + 0));
+		addInput(createInputCentered<PJ301MPort>(Vec(centerX - offsetX, posY1), module, ScaleCV::QUANTIZER_INPUTS + 1));
+		addInput(createInputCentered<PJ301MPort>(Vec(centerX - offsetX, posY2), module, ScaleCV::QUANTIZER_INPUTS + 2));
+		addInput(createInputCentered<PJ301MPort>(Vec(centerX - offsetX, posY3), module, ScaleCV::QUANTIZER_INPUTS + 3));
+
+		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY), module, ScaleCV::QUANTIZER_OUTPUTS + 0));
+		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY1), module, ScaleCV::QUANTIZER_OUTPUTS + 1));
+		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY2), module, ScaleCV::QUANTIZER_OUTPUTS + 2));
+		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY3), module, ScaleCV::QUANTIZER_OUTPUTS + 3));
 
 		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX, 330), module, ScaleCV::POLY_OUTPUT));
 	}
