@@ -113,7 +113,7 @@ struct ChordCVWidget : ModuleWidget {
 		ChordDisplayWidget(Vec _pos, Vec _size, ChordCV* _module) {
 			box.size = _size;
 			box.pos = _pos.minus(_size.div(2));
-			module = _module;			
+			module = _module;
 		}
 
 		void draw(const DrawArgs &args) override {
@@ -181,7 +181,7 @@ struct ChordCVWidget : ModuleWidget {
 		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY2), module, ChordCV::CV_OUTPUTS + 2));
 		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY2 + spacingY2), module, ChordCV::CV_OUTPUTS + 3));
 
-		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX, 330), module, ChordCV::POLY_OUTPUT));
+		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX, 332), module, ChordCV::POLY_OUTPUT));
 	}
 };
 

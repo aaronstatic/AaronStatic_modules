@@ -6,7 +6,7 @@ ChordCV Introduction video: https://www.youtube.com/watch?v=SSoJW4VzTp8
 To install, just go to the plugin library (https://vcvrack.com/plugins) search for "Aaron Static" and click the +Add button
 
 ## ChordCV
-![ChordCV](https://i.imgur.com/pdB5wFX.png "ChordCV")
+![ChordCV](https://i.imgur.com/5TeI901.jpg "ChordCV")
 
 Generates a chord and outputs up to 4 x 1v/oct voltages and a polyphonic 1v/oct signal separately.
 
@@ -25,7 +25,7 @@ The first 1v/oct output (and first poly channel) will always be the bass note, i
 If the chord is a triad (3 notes), the 4th 1v/oct output will be the bass note + 1 octave for convenience. The polyphonic output will not include this higher note.
 
 ## ScaleCV
-![ChordCV](https://i.imgur.com/z52Qqil.jpg "ScaleCV")
+![ChordCV](https://i.imgur.com/6X5hZbV.jpg "ScaleCV")
 
 Generates a scale and outputs a polyphonic 1v/oct signal with 7 notes + quantizes the 4 monophonic inputs to that scale if provided.
 
@@ -34,7 +34,7 @@ Generates a scale and outputs a polyphonic 1v/oct signal with 7 notes + quantize
 * **Quantizers**: 4 Quantizers that will quantize a monophonic input to the selected scale
 
 ## RandomNoteCV
-![RandomNoteCV](https://i.imgur.com/5rybov5.jpg "RandomNoteCV")
+![RandomNoteCV](https://i.imgur.com/xK91S79.jpg "RandomNoteCV")
 
 Generates a random note when triggered within the selected range and outputs a 1v/oct signal. If a polyphonic input is connected the note is selected from the provided notes (they are quantized).
 

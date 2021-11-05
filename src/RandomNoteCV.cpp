@@ -176,7 +176,7 @@ struct RandomNoteCVWidget : ModuleWidget {
 		addParam(createParamCentered<Rogan2PWhite>(Vec(centerX,245), module, RandomNoteCV::RANGE_PARAM));
 		addInput(createInputCentered<PJ301MPort>(Vec(centerX - offsetXL, 245), module, RandomNoteCV::RANGE_INPUT));
 
-		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX, 330), module, RandomNoteCV::NOTE_OUTPUT));
+		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX, 332), module, RandomNoteCV::NOTE_OUTPUT));
 	}
 };
 

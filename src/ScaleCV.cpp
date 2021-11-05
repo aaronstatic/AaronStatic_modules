@@ -169,7 +169,7 @@ struct ScaleCVWidget : ModuleWidget {
 		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY2), module, ScaleCV::QUANTIZER_OUTPUTS + 2));
 		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX + offsetX, posY3), module, ScaleCV::QUANTIZER_OUTPUTS + 3));
 
-		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX, 330), module, ScaleCV::POLY_OUTPUT));
+		addOutput(createOutputCentered<PJ301MPort>(Vec(centerX, 332), module, ScaleCV::POLY_OUTPUT));
 	}
 };
 
