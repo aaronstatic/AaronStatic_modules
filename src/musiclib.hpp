@@ -7,6 +7,7 @@ using namespace rack;
 float note_to_voltage(int v);
 float voltage_to_note(float value);
 int voltage_to_note_int(float value);
+int voltage_to_note_with_octave(float value);
 
 //DSP Stuff (credit Marc Boule / Impromptu Modular)
 struct Trigger : dsp::SchmittTrigger {

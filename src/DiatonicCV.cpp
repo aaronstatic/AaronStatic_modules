@@ -73,7 +73,7 @@ void DiatonicCV::process(const ProcessArgs &args){
 			for (int c = 0; c < 16; c++) {
 				float v = inputs[POLY_INPUT].getVoltage(c);
 				polyNotes_v[c] = v;
-				polyNotes[c] = voltage_to_note_int(v);
+				polyNotes[c] = voltage_to_note_with_octave(v);
 			}
 			//sort the notes in ascending order
 			std::sort(std::begin(polyNotes), polyNotes + polyChannels);
@@ -82,6 +82,14 @@ void DiatonicCV::process(const ProcessArgs &args){
 			polyChannels = 7;
 			for(int t=0; t<7; t++){
 				polyNotes[t] = cmajor.notes[t];
+			}
+		}
+
+		//remove octave
+		if(polyChannels > 0){
+			int root_octave = (int)floor((float)polyNotes[0] / 12.0f);
+			for (int c = 0; c < polyChannels; c++) {
+				polyNotes[c] -= root_octave * 12;
 			}
 		}
 
@@ -94,30 +102,28 @@ void DiatonicCV::process(const ProcessArgs &args){
 		float chord_v = params[CHORD_PARAM].getValue();
 		if(inputs[CHORD_INPUT].isConnected()){
 			chord_v = inputs[CHORD_INPUT].getVoltage();
-			if(chord_v < 0.0f) chord_v = 0.0f;
-			if(chord_v > 7.0f) chord_v = 7.0f;
 		}
-		chord = (int)round(chord_v);
+		chord = (int)round(clamp(chord_v, 0.0f, 6.0f));
 
 		float type_v = params[TYPE_PARAM].getValue();
 		if(inputs[TYPE_INPUT].isConnected()){
 			type_v = inputs[TYPE_INPUT].getVoltage();
-			if(type_v < 0.0f) type_v = 0.0f;
-			if(type_v > 3.0f) type_v = 3.0f;
 		}
-		chord_type = (int)round(type_v);
+		chord_type = (int)round(clamp(type_v, 0.0f, 2.0f));
 
 		//inversion
-		inversion = (int)round(params[INVERSION_PARAM].getValue());
-		if(inputs[INVERSION_PARAM].isConnected()){
-			inversion = (int)clamp(round(inputs[INVERSION_PARAM].getVoltage()),0.0f,3.0f);
+		float inversion_v = params[INVERSION_PARAM].getValue();
+		if(inputs[INVERSION_INPUT].isConnected()){
+			inversion_v = inputs[INVERSION_INPUT].getVoltage();
 		}
+		inversion = (int)round(clamp(inversion_v, 0.0f, 4.0f));
 
 		//voicing
-		voicing = (int)round(params[VOICING_PARAM].getValue());
-		if(inputs[VOICING_PARAM].isConnected()){
-			voicing = (int)clamp(round(inputs[VOICING_PARAM].getVoltage()),0.0f,4.0f);
+		float voicing_v = params[VOICING_PARAM].getValue();
+		if(inputs[VOICING_INPUT].isConnected()){
+			voicing_v = inputs[VOICING_INPUT].getVoltage();
 		}
+		voicing = (int)round(clamp(voicing_v, 0.0f, 4.0f));
 
 		//Make the chord
 		playing_chord = get_diatonic_chord(polyNotes, polyChannels, octave, chord, chord_type, inversion, voicing);
@@ -137,7 +143,7 @@ void DiatonicCV::process(const ProcessArgs &args){
 struct DiatonicCVWidget : ModuleWidget {
 	struct ChordDisplayWidget : TransparentWidget {
 		DiatonicCV* module;
-		char text[10];
+		char text[13];
 
 		ChordDisplayWidget(Vec _pos, Vec _size, DiatonicCV* _module) {
 			box.size = _size;
@@ -159,7 +165,7 @@ struct DiatonicCVWidget : ModuleWidget {
 				if (module != NULL && module->playing_chord.num_notes > 2){
 					detect_chord_name_simple(module->playing_chord,text);
 				}else{
-					snprintf(text, 9, "         ");
+					snprintf(text, 13, "             ");
 				}
 
 				nvgText(args.vg, textPos.x, textPos.y, text, NULL);
@@ -179,7 +185,7 @@ struct DiatonicCVWidget : ModuleWidget {
 
 		const int centerX = box.size.x / 2;
 
-		ChordDisplayWidget* display = new ChordDisplayWidget(Vec(centerX, 55), Vec(76, 29), module);
+		ChordDisplayWidget* display = new ChordDisplayWidget(Vec(centerX, 55), Vec(box.size.x - 5, 29), module);
 		addChild(display);
 
 		addInput(createInputCentered<PJ301MPort>(Vec(centerX, 95), module, DiatonicCV::POLY_INPUT));

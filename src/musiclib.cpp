@@ -17,6 +17,13 @@ float voltage_to_note(float value) {
 	return semi;
 }
 
+int voltage_to_note_with_octave(float value) {
+	float octave = round(value);
+	float rest = value - 1.0*octave;
+	int semi = (int)(octave * 12.0f) + round(rest * 12.0);
+	return semi;
+}
+
 int voltage_to_note_int(float value) {
 	float octave = round(value);
 	float rest = value - 1.0*octave;
@@ -177,18 +184,12 @@ struct chord get_diatonic_chord(int* notes, int num_notes, int octave, int chord
 		int transpose = 0;
 
 		//Wrap if needed
-		if(index >= num_notes){
+		while(index >= num_notes){
 			index -= num_notes;
 			transpose++;
 		}
 
-		//Wrap again if needed
-		if(index >= num_notes){
-			index -= num_notes;
-			transpose++;
-		}
-
-		if(index < num_notes){
+		if(index < num_notes && index > -1){
 			return_chord.notes_pre[t] = (transpose * 12) + notes[index];
 			actual_length++;
 		}
@@ -364,13 +365,17 @@ void detect_chord_name_simple(struct chord chord, char* text){
 			if(intervals[0] == MAJOR_SECOND && intervals[1] == PERFECT_FOURTH) chord_type = 5; //sus2
 			if(intervals[0] == PERFECT_FOURTH && intervals[1] == MAJOR_SECOND) chord_type = 6; //sus4
 		}
-	}
 
-    if(chord.inversion > 0){
-		int bass_note = chord.notes[0] % 12;
-		sprintf(text, "%s%s/%s", NOTE_NAMES[chord.notes_pre[0]], CHORD_TYPE_NAMES[chord_type], NOTE_NAMES[bass_note]);
-    }else{
-		sprintf(text, "%s%s", NOTE_NAMES[chord.notes_pre[0]], CHORD_TYPE_NAMES[chord_type]);
+		int root_note = chord.notes_pre[0] % 12;
+
+	    if(chord.inversion > 0){
+			int bass_note = chord.notes[0] % 12;
+			sprintf(text, "%s%s/%s", NOTE_NAMES[root_note], CHORD_TYPE_NAMES[chord_type], NOTE_NAMES[bass_note]);
+	    }else{
+			sprintf(text, "%s%s", NOTE_NAMES[root_note], CHORD_TYPE_NAMES[chord_type]);
+		}
+	}else{
+		sprintf(text, "         ");
 	}
 }
 

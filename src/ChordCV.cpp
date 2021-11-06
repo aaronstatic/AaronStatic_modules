@@ -108,7 +108,7 @@ void ChordCV::process(const ProcessArgs &args){
 struct ChordCVWidget : ModuleWidget {
 	struct ChordDisplayWidget : TransparentWidget {
 		ChordCV* module;
-		char text[10];
+		char text[13];
 
 		ChordDisplayWidget(Vec _pos, Vec _size, ChordCV* _module) {
 			box.size = _size;
@@ -130,7 +130,7 @@ struct ChordCVWidget : ModuleWidget {
 				if (module != NULL){
 					get_chord_name(module->root_semi,module->chord_type,module->inverted,module->bass_note,text);
 				}else{
-					snprintf(text, 9, "         ");
+					snprintf(text, 13, "             ");
 				}
 
 				nvgText(args.vg, textPos.x, textPos.y, text, NULL);
