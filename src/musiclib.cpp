@@ -25,19 +25,30 @@ int voltage_to_note_int(float value) {
 	return semi;
 }
 
-
+//Intervals (for readability)
+const int MINOR_SECOND 		= 1;
+const int MAJOR_SECOND 		= 2;
+const int MINOR_THIRD 		= 3;
+const int MAJOR_THIRD 		= 4;
+const int PERFECT_FOURTH 	= 5;
+const int DIMINISHED_FIFTH 	= 6;
+const int PERFECT_FIFTH 	= 7;
+const int AUGMENTED_FIFTH 	= 8;
+const int MAJOR_SIXTH 		= 9;
+const int MINOR_SEVENTH 	= 10;
+const int MAJOR_SEVENTH 	= 11;
 
 //Chords
 static const int CHORD_DEGREES[9][3] = {
-    {4,7,0}, //Major
-    {3,7,0}, //Minor
-    {4,7,10}, //Dominant 7
-    {3,7,10}, //Minor 7
-    {4,7,11}, //Major 7
-    {2,7,0}, //sus2
-    {5,7,0}, //sus4
-    {3,6,0}, //dim
-    {4,8,0} //aug
+    {MAJOR_THIRD,PERFECT_FIFTH,0}, //Major
+    {MINOR_THIRD,PERFECT_FIFTH,0}, //Minor
+    {MAJOR_THIRD,PERFECT_FIFTH,MINOR_SEVENTH}, //Dominant 7
+    {MINOR_THIRD,PERFECT_FIFTH,MINOR_SEVENTH}, //Minor 7
+    {MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SEVENTH}, //Major 7
+    {MAJOR_SECOND,PERFECT_FIFTH,0}, //sus2
+    {PERFECT_FOURTH,PERFECT_FIFTH,0}, //sus4
+    {MINOR_THIRD,DIMINISHED_FIFTH,0}, //dim
+    {MAJOR_THIRD,AUGMENTED_FIFTH,0} //aug
 };
 
 struct chord get_chord(int root_note, int type, int inversion, int voicing){
@@ -50,6 +61,10 @@ struct chord get_chord(int root_note, int type, int inversion, int voicing){
 	int seventh_note = root_note + degrees[2];
 
 	if(degrees[2] == 0){     //Has 3 notes
+		return_chord.notes_pre[0] = root_note;
+        return_chord.notes_pre[1] = third_note;
+        return_chord.notes_pre[2] = fifth_note;
+
 		if(inversion == 3){
 			inversion = 2;
 		}
@@ -87,6 +102,11 @@ struct chord get_chord(int root_note, int type, int inversion, int voicing){
         return_chord.num_notes = 3;
 
 	}else{             //Has 4 notes
+		return_chord.notes_pre[0] = root_note;
+        return_chord.notes_pre[1] = third_note;
+        return_chord.notes_pre[2] = fifth_note;
+        return_chord.notes_pre[3] = seventh_note;
+
 		if(inversion == 1){
             root_note += 12;
             int tmp = root_note;
@@ -138,20 +158,126 @@ struct chord get_chord(int root_note, int type, int inversion, int voicing){
         return_chord.notes[3] = seventh_note;
         return_chord.num_notes = 4;
 	}
+	return_chord.inversion = inversion;
     return return_chord;
+}
+
+struct chord get_diatonic_chord(int* notes, int num_notes, int octave, int chord, int type, int inversion, int voicing){
+	struct chord return_chord;
+
+	int chord_length = 3 + type;
+	int actual_length = 0;
+	if(inversion > chord_length - 1) inversion = chord_length - 1;
+	return_chord.inversion = inversion;
+
+	//Build the chord from the scale
+
+	for(int t=0; t < chord_length; t++){
+		int index = chord + (t * 2);
+		int transpose = 0;
+
+		//Wrap if needed
+		if(index >= num_notes){
+			index -= num_notes;
+			transpose++;
+		}
+
+		//Wrap again if needed
+		if(index >= num_notes){
+			index -= num_notes;
+			transpose++;
+		}
+
+		if(index < num_notes){
+			return_chord.notes_pre[t] = (transpose * 12) + notes[index];
+			actual_length++;
+		}
+	}
+
+	return_chord.num_notes = actual_length;
+
+	//Transpose the chord
+	for(int t=0; t < actual_length; t++){
+		return_chord.notes[t] = (octave * 12) + return_chord.notes_pre[t];
+	}
+
+	//Perform inversion
+	if(inversion > 0 && actual_length > 1){
+		int new_notes[6];
+		int index = inversion;
+		for(int t=0; t < actual_length; t++){
+			int i = index;
+			if(i >= actual_length) {
+				i -= actual_length;
+				new_notes[t] = return_chord.notes[i] + 12;
+			}else{
+				new_notes[t] = return_chord.notes[i];
+			}
+			index++;
+		}
+		for(int t=0; t < actual_length; t++){
+			return_chord.notes[t] = new_notes[t];
+		}
+	}
+
+	//Voice the chord
+	if(voicing > 0 && actual_length > 2){
+		int root_note = return_chord.notes[0];
+		if(root_note > 11){
+			if(voicing == 1){
+				return_chord.notes[0] -= 12;
+			}
+			if(voicing == 2){
+				return_chord.notes[0] -= 12;
+				return_chord.notes[2] -= 12;
+			}
+			if(voicing == 3){
+				return_chord.notes[0] -= 12;
+				return_chord.notes[1] += 12;
+			}
+			if(voicing == 4){
+				return_chord.notes[0] -= 12;
+				if(actual_length > 3){
+					return_chord.notes[3] -= 12;
+				}
+			}
+		}
+	}
+
+	return return_chord;
 }
 
 static const char * NOTE_NAMES[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 static const char * CHORD_TYPE_NAMES[] = {
-  "",
-  "m",
-  "7",
-  "m7",
-  "maj7",
-  "sus2",
-  "sus4",
-  "dim",
-  "+"
+  "",		//0
+  "m",		//1
+  "7",		//2
+  "m7",		//3
+  "maj7",	//4
+  "sus2",	//5
+  "sus4",	//6
+  "dim",	//7
+  "+",		//8
+  "9",		//9
+  "m9",		//10
+  "maj9",	//11
+  "+M7",	//12
+  "+M9",	//13
+  "mM7",	//14
+  "mM9",	//15
+  "dim7",	//16
+  "dim9",	//17
+  "m7b5",	//18
+  "+7",		//19
+  "mM7b5",	//20
+  "7b5",	//21
+  "M7b5",	//22
+  "7b9",	//23
+  "6/9",	//24
+  "mb9",	//25
+  "maj79",	//26
+  "dimb9",	//27
+  "dim9"	//28
 };
 
 void get_chord_name(int root_semi, int chord_type, bool inverted, int bass_note, char* text) {
@@ -160,6 +286,92 @@ void get_chord_name(int root_semi, int chord_type, bool inverted, int bass_note,
         sprintf(inv,"/%s",NOTE_NAMES[bass_note]);
     }
     sprintf(text, "%s%s%s", NOTE_NAMES[root_semi], CHORD_TYPE_NAMES[chord_type], inv);
+}
+
+void detect_chord_name_simple(struct chord chord, char* text){
+	//Detect the chord type (if we can)
+	int chord_type = 0; //default to major
+
+	if(chord.num_notes > 2){
+		//don't bother unless theres at least 3 notes
+
+		//build an array of intervals
+		int intervals[5] = {0,0,0,0,0};
+		for(int t=1; t < chord.num_notes; t++){
+			intervals[t-1] = chord.notes_pre[t] - chord.notes_pre[t-1];
+		}
+
+
+
+		//Is there a better way to do this? if you know please submit a pull request xD
+		if(chord.num_notes > 3){
+			//Its a 7 or 9 chord
+			if(intervals[0] == MAJOR_THIRD){
+				if(intervals[1] == MINOR_THIRD){
+					//major triad
+					if(intervals[2] == MINOR_THIRD) {
+						chord_type = 2; //dominant seventh
+						if(chord.num_notes == 5 && intervals[3] == MINOR_THIRD) chord_type = 23; //dominant minor ninth
+						if(chord.num_notes == 5 && intervals[3] == MAJOR_THIRD) chord_type = 9; //dominant ninth
+					}
+					if(intervals[2] == MAJOR_THIRD) {
+						chord_type = 4; //major seventh
+						if(chord.num_notes == 5 && intervals[3] == MAJOR_THIRD) chord_type = 11; //major ninth
+						if(chord.num_notes == 5 && intervals[3] == MINOR_THIRD) chord_type = 26; //major seventh ninth
+					}
+					if(intervals[2] == MAJOR_SECOND) {
+						if(chord.num_notes == 5 && intervals[3] == PERFECT_FOURTH) chord_type = 24; //6/9
+					}
+				}
+				if(intervals[1] == MAJOR_THIRD){
+					//augmented triad
+					if(intervals[2] == MINOR_THIRD) chord_type = 12; //augmented major seventh
+					if(intervals[2] == MAJOR_SECOND) chord_type = 19; //augmented seventh
+				}
+				if(intervals[1] == MAJOR_SECOND){
+					if(intervals[2] == MAJOR_THIRD) chord_type = 21; //dominant seventh flat 5
+					if(intervals[2] == PERFECT_FOURTH) chord_type = 22; //major seventh flat 5
+				}
+			}
+			if(intervals[0] == MINOR_THIRD){
+				if(intervals[1] == MAJOR_THIRD){
+					//minor triad
+					if(intervals[2] == MINOR_THIRD) {
+						chord_type = 3; //minor seventh
+						if(chord.num_notes == 5 && intervals[3] == MAJOR_THIRD) chord_type = 10; //minor ninth
+						if(chord.num_notes == 5 && intervals[3] == MINOR_THIRD) chord_type = 25; //minor flat ninth
+					}
+					if(intervals[2] == MAJOR_THIRD) chord_type = 14; //minmaj seventh
+				}
+				if(intervals[1] == MINOR_THIRD){
+					//diminished triad
+					if(intervals[2] == MINOR_THIRD) chord_type = 16; //diminished seventh
+					if(intervals[2] == MAJOR_THIRD) {
+						chord_type = 18; //half diminished seventh
+						if(chord.num_notes == 5 && intervals[3] == MINOR_THIRD) chord_type = 27; //diminished flat ninth
+						if(chord.num_notes == 5 && intervals[3] == MAJOR_THIRD) chord_type = 28; //diminished ninth
+					}
+					if(intervals[2] == PERFECT_FOURTH) chord_type = 20; //diminished major seventh
+				}
+			}
+		}else{
+			//Its just a triad
+			if(intervals[0] == MINOR_THIRD){
+				if(intervals[1] == MAJOR_THIRD) chord_type = 1; //minor
+				if(intervals[1] == MINOR_THIRD) chord_type = 7; //diminished
+			}
+			if(intervals[0] == MAJOR_THIRD && intervals[1] == MAJOR_THIRD) chord_type = 8; //augmented
+			if(intervals[0] == MAJOR_SECOND && intervals[1] == PERFECT_FOURTH) chord_type = 5; //sus2
+			if(intervals[0] == PERFECT_FOURTH && intervals[1] == MAJOR_SECOND) chord_type = 6; //sus4
+		}
+	}
+
+    if(chord.inversion > 0){
+		int bass_note = chord.notes[0] % 12;
+		sprintf(text, "%s%s/%s", NOTE_NAMES[chord.notes_pre[0]], CHORD_TYPE_NAMES[chord_type], NOTE_NAMES[bass_note]);
+    }else{
+		sprintf(text, "%s%s", NOTE_NAMES[chord.notes_pre[0]], CHORD_TYPE_NAMES[chord_type]);
+	}
 }
 
 void get_note_name(int note, char* text) {

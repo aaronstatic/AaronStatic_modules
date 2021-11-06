@@ -54,12 +54,18 @@ struct RefreshCounter {
 
 //Chords
 struct chord {
-    int num_notes;
-    int notes[4];
+    int num_notes; 		//How many notes in this chord
+    int notes[6];		//The notes (post-inversion and transpose)
+	int notes_pre[6];	//The notes (before inversion and transpose)
+	int inversion;		//The inversion of this chord
+	int octave;			//Octave of the root note
 };
 
 struct chord get_chord(int root_note, int type, int inversion, int voicing);
 void get_chord_name(int root_semi, int chord_type, bool inverted, int bass_note, char* text);
+
+struct chord get_diatonic_chord(int* notes, int num_notes, int octave, int chord, int type, int inversion, int voicing);
+void detect_chord_name_simple(struct chord chord, char* text);
 
 //Scales
 struct scale {

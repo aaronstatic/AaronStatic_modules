@@ -26,6 +26,12 @@
         "tags": ["Polyphonic","Tuner","Quantizer"]
     },
     {
+        "slug": "DiatonicCV",
+        "name": "DiatonicCV",
+        "description": "Generates diatonic chords from the provided scale",
+        "tags": ["Polyphonic","Tuner"]
+    },
+    {
         "slug": "RandomNoteCV",
         "name": "RandomNoteCV",
         "description": "Generates a random note when triggered",

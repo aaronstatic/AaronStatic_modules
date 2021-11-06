@@ -33,6 +33,17 @@ Generates a scale and outputs a polyphonic 1v/oct signal with 7 notes + quantize
 * **Mode**: Chooses the scale mode (input range -4v to 4v)
 * **Quantizers**: 4 Quantizers that will quantize a monophonic input to the selected scale
 
+## DiatonicCV
+![DiatonicCV](https://i.imgur.com/aJNhwkL.jpg "DiatonicCV")
+
+Generates a diatonic chord from the provided scale, if one is provided via the poly input (otherwise C Major is used). Best used in combination with ScaleCV above.
+
+* **Octave**: Which octave to transpose the chord to (1v/oct, input range -4v to 4v)
+* **Chord**: Which chord degree in the scale (I - VII, input range 0v to 6v)
+* **Type**: Which chord type (triad, seventh, ninth, input range 0v to 3v)
+* **Inversion**: Chooses chord inversion (input range 0v to 4v)
+* **Voicing**: Chooses the chord voicing (input range 0v to 4v, refer to ChordCV for more info)  
+
 ## RandomNoteCV
 ![RandomNoteCV](https://i.imgur.com/xK91S79.jpg "RandomNoteCV")
 

@@ -68,6 +68,8 @@ void RandomNoteCV::process(const ProcessArgs &args){
 				polyNotes_v[c] = v;
 				polyNotes[c] = voltage_to_note_int(v);
 			}
+			//sort the notes in ascending order
+			std::sort(std::begin(polyNotes), polyNotes + polyChannels);
 		}else{
 			hasPoly = false;
 		}

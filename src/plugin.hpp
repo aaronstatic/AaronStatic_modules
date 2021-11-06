@@ -12,6 +12,7 @@ extern Plugin* pluginInstance;
 extern Model* modelChordCV;
 extern Model* modelScaleCV;
 extern Model* modelRandomNoteCV;
+extern Model* modelDiatonicCV;
 
 static const int displayAlpha = 23;
 NVGcolor prepareDisplay(NVGcontext *vg, Rect *box, int fontSize);
