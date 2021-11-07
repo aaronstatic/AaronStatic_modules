@@ -107,25 +107,28 @@ struct ScaleCVWidget : ModuleWidget {
 			module = _module;
 		}
 
-		void draw(const DrawArgs &args) override {
-			std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/PixelOperator.ttf"));
-			if(font){
-				NVGcolor textColor = prepareDisplay(args.vg, &box, 22);
-				nvgFontFaceId(args.vg, font->handle);
-				nvgTextLetterSpacing(args.vg, -1.5);
-				nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
+		void drawLayer(const DrawArgs& args, int layer) override {
+			if (layer == 1) {
+				std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/fonts/PixelOperator.ttf"));
+				if(font){
+					NVGcolor textColor = prepareDisplay(args.vg, &box, 22);
+					nvgFontFaceId(args.vg, font->handle);
+					nvgTextLetterSpacing(args.vg, -1.5);
+					nvgTextAlign(args.vg, NVG_ALIGN_CENTER);
 
-				Vec textPos = Vec(box.size.x/2, 21.0f);
-				nvgFillColor(args.vg, textColor);
+					Vec textPos = Vec(box.size.x/2, 21.0f);
+					nvgFillColor(args.vg, textColor);
 
-				if (module != NULL){
-					get_scale_name(module->root_semi,module->mode,text);
-				}else{
-					snprintf(text, 13, "             ");
+					if (module != NULL){
+						get_scale_name(module->root_semi,module->mode,text);
+					}else{
+						snprintf(text, 13, "             ");
+					}
+
+					nvgText(args.vg, textPos.x, textPos.y, text, NULL);
 				}
-
-				nvgText(args.vg, textPos.x, textPos.y, text, NULL);
 			}
+			Widget::drawLayer(args, layer);
 		}
 
 	};
