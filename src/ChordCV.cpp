@@ -108,7 +108,7 @@ void ChordCV::process(const ProcessArgs &args){
 struct ChordCVWidget : ModuleWidget {
 	struct ChordDisplayWidget : TransparentWidget {
 		ChordCV* module;
-		char text[13];
+		char text[13] = "";
 
 		ChordDisplayWidget(Vec _pos, Vec _size, ChordCV* _module) {
 			box.size = _size;

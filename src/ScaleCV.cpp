@@ -99,7 +99,7 @@ void ScaleCV::process(const ProcessArgs &args){
 struct ScaleCVWidget : ModuleWidget {
 	struct ChordDisplayWidget : TransparentWidget {
 		ScaleCV* module;
-		char text[13];
+		char text[13] = "";
 
 		ChordDisplayWidget(Vec _pos, Vec _size, ScaleCV* _module) {
 			box.size = _size;

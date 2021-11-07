@@ -132,10 +132,11 @@ void DiatonicCV::process(const ProcessArgs &args){
 	if (refresh.processLights()) {
 
 	}
-
-	outputs[POLY_OUTPUT].setChannels(playing_chord.num_notes);
-	for(int t=0; t<playing_chord.num_notes; t++){
-		outputs[POLY_OUTPUT].setVoltage(note_to_voltage(playing_chord.notes[t]),t);
+	if(polyChannels > 0){
+		outputs[POLY_OUTPUT].setChannels(playing_chord.num_notes);
+		for(int t=0; t<playing_chord.num_notes; t++){
+			outputs[POLY_OUTPUT].setVoltage(note_to_voltage(playing_chord.notes[t]),t);
+		}
 	}
 }
 
@@ -143,7 +144,7 @@ void DiatonicCV::process(const ProcessArgs &args){
 struct DiatonicCVWidget : ModuleWidget {
 	struct ChordDisplayWidget : TransparentWidget {
 		DiatonicCV* module;
-		char text[13];
+		char text[13] = "";
 
 		ChordDisplayWidget(Vec _pos, Vec _size, DiatonicCV* _module) {
 			box.size = _size;
@@ -168,7 +169,7 @@ struct DiatonicCVWidget : ModuleWidget {
 					}else{
 						snprintf(text, 13, "             ");
 					}
-	
+
 					nvgText(args.vg, textPos.x, textPos.y, text, NULL);
 				}
 			}

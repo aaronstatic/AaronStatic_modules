@@ -119,7 +119,7 @@ void RandomNoteCV::process(const ProcessArgs &args){
 struct RandomNoteCVWidget : ModuleWidget {
 	struct NoteDisplayWidget : TransparentWidget {
 		RandomNoteCV* module;
-		char text[2];
+		char text[2] = "";
 
 		NoteDisplayWidget(Vec _pos, Vec _size, RandomNoteCV* _module) {
 			box.size = _size;
