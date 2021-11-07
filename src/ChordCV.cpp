@@ -150,7 +150,7 @@ struct ChordCVWidget : ModuleWidget {
 
 		const int centerX = box.size.x / 2;
 
-		ChordDisplayWidget* display = new ChordDisplayWidget(Vec(centerX, 55), Vec(76, 29), module);
+		ChordDisplayWidget* display = new ChordDisplayWidget(Vec(centerX, 55), Vec(box.size.x - 5, 29), module);
 		addChild(display);
 
 		const int offsetXL = 40;
