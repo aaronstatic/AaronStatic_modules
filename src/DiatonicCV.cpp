@@ -38,6 +38,7 @@ struct DiatonicCV : Module {
 	int polyChannels = 0;
 	int inversion = 0;
 	int voicing = 0;
+	bool hasChord = false;
 	struct chord playing_chord;
 	struct scale cmajor;
 
@@ -127,6 +128,7 @@ void DiatonicCV::process(const ProcessArgs &args){
 
 		//Make the chord
 		playing_chord = get_diatonic_chord(polyNotes, polyChannels, octave, chord, chord_type, inversion, voicing);
+		hasChord = true;
 	}
 
 	if (refresh.processLights()) {
@@ -164,7 +166,7 @@ struct DiatonicCVWidget : ModuleWidget {
 					Vec textPos = Vec(box.size.x/2, 21.0f);
 					nvgFillColor(args.vg, textColor);
 
-					if (module != NULL && module->playing_chord.num_notes > 2){
+					if (module != NULL && module->hasChord){
 						detect_chord_name_simple(module->playing_chord,text);
 					}else{
 						snprintf(text, 13, "             ");
