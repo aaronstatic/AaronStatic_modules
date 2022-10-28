@@ -87,7 +87,6 @@ struct chord get_chord(int root_note, int type, int inversion, int voicing){
             third_note += 12;
             int tmp = root_note;
             root_note = fifth_note;
-            third_note = fifth_note;
             fifth_note = third_note;
             third_note = tmp;
 		}
