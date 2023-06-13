@@ -63,28 +63,32 @@ void ScaleCV::process(const ProcessArgs &args){
 	//Quantizers
 	for(int t=0; t<4; t++){
 		if(inputs[QUANTIZER_INPUTS + t].isConnected() && outputs[QUANTIZER_OUTPUTS + t].isConnected()){
-			float in_v = inputs[QUANTIZER_INPUTS + t].getVoltage();
-			float in_octave = round(in_v) + 4;
-			float in_semi = voltage_to_note(in_v);
-			float lowest_dist = 12.0f;
-			float out_note = 0.0f;
-			for(int i=0; i<7; i++){
-				float note = (float)(s.notes[i] - ((octave + 4) * 12));
-				float dist = abs(note - in_semi);
-				if(dist < lowest_dist){
-					out_note = note;
-					lowest_dist = dist;
+			int	channel_count = inputs[QUANTIZER_INPUTS + t].getChannels();
+			outputs[QUANTIZER_OUTPUTS + t].setChannels(channel_count);
+			for(int c=0; c < channel_count; c++){
+				float in_v = inputs[QUANTIZER_INPUTS + t].getVoltage(c);
+				float in_octave = round(in_v) + 4;
+				float in_semi = voltage_to_note(in_v);
+				float lowest_dist = 12.0f;
+				float out_note = 0.0f;
+				for(int i=0; i<7; i++){
+					float note = (float)(s.notes[i] - ((octave + 4) * 12));
+					float dist = abs(note - in_semi);
+					if(dist < lowest_dist){
+						out_note = note;
+						lowest_dist = dist;
+					}
+					//check one octave down
+					note -= 12;
+					dist = abs(note - in_semi);
+					if(dist < lowest_dist){
+						out_note = note;
+						lowest_dist = dist;
+					}
 				}
-				//check one octave down
-				note -= 12;
-				dist = abs(note - in_semi);
-				if(dist < lowest_dist){
-					out_note = note;
-					lowest_dist = dist;
-				}
+				out_note += in_octave * 12.0f;
+				outputs[QUANTIZER_OUTPUTS + t].setVoltage(note_to_voltage((int)out_note), c);
 			}
-			out_note += in_octave * 12.0f;
-			outputs[QUANTIZER_OUTPUTS+t].setVoltage(note_to_voltage((int)out_note));
 		}
 
 	}
